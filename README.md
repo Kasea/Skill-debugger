@@ -3,6 +3,8 @@ A skill debugger module for Tera-Proxy, it allows for an easier overview of cert
 
 Commands:
 
+clear: Clears out cache
+
 print: print out skills(real on left, fake on right)
 
 fprint: print out skills(fake on left, real on right)
