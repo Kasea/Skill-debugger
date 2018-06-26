@@ -91,12 +91,12 @@ class Debugger{
                 let info = {
                     packet: 'sActionStage',
                     type: "start",
-                    xyz: [Math.round(e.x, 2), Math.round(e.y, 2), Math.round(e.z, 2)].toString(),
+                    xyz: [Math.round(e.loc.x, 2), Math.round(e.loc.y, 2), Math.round(e.loc.z, 2)].toString(),
                     w: e.w,
-                    id: e.skill - 0x4000000,
+                    id: e.skill.id,
                     stage: e.stage,
                     speed: e.speed.toFixed(2),
-                    toXYZ: [Math.round(e.toX, 2), Math.round(e.toY, 2), Math.round(e.toZ, 2)].toString(),
+                    toXYZ: [Math.round(e.dest.x, 2), Math.round(e.dest.y, 2), Math.round(e.dest.z, 2)].toString(),
                     movmt: e.movement.toString(),
                     time: Date.now()
                 };
@@ -104,26 +104,26 @@ class Debugger{
                 else realStage.push(info);
             }
         }
-        dispatch.hook('S_ACTION_STAGE', 3, {order: -999999999, filter:{fake:true}}, sActionStage.bind(null, true));
-        dispatch.hook('S_ACTION_STAGE', 3, {order: -999999999, filter:{fake:false}}, sActionStage.bind(null, false));
+        dispatch.hook('S_ACTION_STAGE', dispatch.base.majorPatchVersion < 74 ? 6:7, {order: -999999999, filter:{fake:true}}, sActionStage.bind(null, true));
+        dispatch.hook('S_ACTION_STAGE', dispatch.base.majorPatchVersion < 74 ? 6:7, {order: -999999999, filter:{fake:false}}, sActionStage.bind(null, false));
 
         function sActionEnd(fake, e) {
             if(debugStates.skill && e.gameId.equals(gameId)) {
                 let info = {
                     packet: 'sActionEnd',
                     type: "end",
-                    xyz: [Math.round(e.x, 2), Math.round(e.y, 2), Math.round(e.z, 2)].toString(),
+                    xyz: [Math.round(e.loc.x, 2), Math.round(e.loc.y, 2), Math.round(e.loc.z, 2)].toString(),
                     w: e.w,
                     endType: e.type,
-                    id: e.skill - 0x4000000,
+                    id: e.skill.id,
                     time: Date.now()
                 };
                 if(fake) fakeStage.push(info);
                 else realStage.push(info);
             }
         }
-        dispatch.hook('S_ACTION_END', 2, {order: -999999999, filter:{fake:true}}, sActionEnd.bind(null, true));
-        dispatch.hook('S_ACTION_END', 2, {order: -999999999, filter:{fake:false}}, sActionEnd.bind(null, false));
+        dispatch.hook('S_ACTION_END', dispatch.base.majorPatchVersion < 74 ? 4:5, {order: -999999999, filter:{fake:true}}, sActionEnd.bind(null, true));
+        dispatch.hook('S_ACTION_END', dispatch.base.majorPatchVersion < 74 ? 4:5, {order: -999999999, filter:{fake:false}}, sActionEnd.bind(null, false));
 
         function sAbnormalityBeginRefresh(fake, refresh, e) {
             if(debugStates.abnormality && e.target.equals(gameId)) {
@@ -166,7 +166,7 @@ class Debugger{
         function sLogin(e) {
             gameId = e.gameId;
         }
-        dispatch.hook('S_LOGIN', 9, sLogin);
+        dispatch.hook('S_LOGIN', 10, sLogin);
     }
 }
 
