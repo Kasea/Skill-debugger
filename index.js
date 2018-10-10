@@ -104,8 +104,8 @@ class Debugger{
                 else realStage.push(info);
             }
         }
-        dispatch.hook('S_ACTION_STAGE', dispatch.base.majorPatchVersion < 74 ? 6:7, {order: -999999999, filter:{fake:true}}, sActionStage.bind(null, true));
-        dispatch.hook('S_ACTION_STAGE', dispatch.base.majorPatchVersion < 74 ? 6:7, {order: -999999999, filter:{fake:false}}, sActionStage.bind(null, false));
+        dispatch.hook('S_ACTION_STAGE', 8, {order: -999999999, filter:{fake:true}}, sActionStage.bind(null, true));
+        dispatch.hook('S_ACTION_STAGE', 8, {order: -999999999, filter:{fake:false}}, sActionStage.bind(null, false));
 
         function sActionEnd(fake, e) {
             if(debugStates.skill && e.gameId.equals(gameId)) {
@@ -124,43 +124,6 @@ class Debugger{
         }
         dispatch.hook('S_ACTION_END', dispatch.base.majorPatchVersion < 74 ? 4:5, {order: -999999999, filter:{fake:true}}, sActionEnd.bind(null, true));
         dispatch.hook('S_ACTION_END', dispatch.base.majorPatchVersion < 74 ? 4:5, {order: -999999999, filter:{fake:false}}, sActionEnd.bind(null, false));
-
-        function sAbnormalityBeginRefresh(fake, refresh, e) {
-            if(debugStates.abnormality && e.target.equals(gameId)) {
-                let info = {
-                    packet: `sAbnormality${refresh?'Refresh':'Begin'}`,
-                    type: refresh?'refresh':'start',
-                    id: e.id,
-                    dur: e.duration,
-                    stacks: e.stacks,
-                    time: Date.now()
-                };
-                if(fake) fakeAbnormal.push(info);
-                else realAbnormal.push(info);
-            }
-        }
-        dispatch.hook('S_ABNORMALITY_BEGIN', 2, {order: -999999999, filter:{fake:true}}, sAbnormalityBeginRefresh.bind(null, true, false));
-        dispatch.hook('S_ABNORMALITY_BEGIN', 2, {order: -999999999, filter:{fake:false}}, sAbnormalityBeginRefresh.bind(null, false, false));
-        dispatch.hook('S_ABNORMALITY_REFRESH', 1, {order: -999999999, filter:{fake:true}}, sAbnormalityBeginRefresh.bind(null, true, true));
-        dispatch.hook('S_ABNORMALITY_REFRESH', 1, {order: -999999999, filter:{fake:false}}, sAbnormalityBeginRefresh.bind(null, false, true));
-
-
-        function sAbnormalityEndFail(fake, fail, e) {
-            if(debugStates.abnormality && e.target.equals(gameId)) {
-                let info = {
-                    packet: `sAbnormality${fail?'Fail':'End'}`,
-                    type: fail?'fail':'end',
-                    id: e.id,
-                    time: Date.now()
-                };
-                if(fake) fakeAbnormal.push(info);
-                else realAbnormal.push(info);
-            }
-        }
-        dispatch.hook('S_ABNORMALITY_END', 1, {order: -999999999, filter:{fake:true}}, sAbnormalityEndFail.bind(null, true, false));
-        dispatch.hook('S_ABNORMALITY_END', 1, {order: -999999999, filter:{fake:false}}, sAbnormalityEndFail.bind(null, false, false));
-        dispatch.hook('S_ABNORMALITY_FAIL', 1, {order: -999999999, filter:{fake:true}}, sAbnormalityEndFail.bind(null, true, true));
-        dispatch.hook('S_ABNORMALITY_FAIL', 1, {order: -999999999, filter:{fake:false}}, sAbnormalityEndFail.bind(null, false, true));
 
 
         function sLogin(e) {
