@@ -11,7 +11,7 @@ const IGNORED_KEY_TYPES = ['type', 'packet'];
 
 class Debugger{
     constructor(dispatch) {
-        const command = require('command')(dispatch);
+        const command = dispatch.command;
         let realStage = [], fakeStage = [];
         let realAbnormal = [], fakeAbnormal = [];
         let gameId;
@@ -87,7 +87,7 @@ class Debugger{
         command.add('fprintAbnormal', ()=> cmdPrintFake(realAbnormal, fakeAbnormal));
 
         function sActionStage(fake, e) {
-            if(debugStates.skill && e.gameId.equals(gameId)) {
+            if(debugStates.skill && e.gameId === gameId) {
                 let info = {
                     packet: 'sActionStage',
                     type: "start",
@@ -108,7 +108,7 @@ class Debugger{
         dispatch.hook('S_ACTION_STAGE', 8, {order: -999999999, filter:{fake:false}}, sActionStage.bind(null, false));
 
         function sActionEnd(fake, e) {
-            if(debugStates.skill && e.gameId.equals(gameId)) {
+            if(debugStates.skill && e.gameId === gameId) {
                 let info = {
                     packet: 'sActionEnd',
                     type: "end",
@@ -122,8 +122,8 @@ class Debugger{
                 else realStage.push(info);
             }
         }
-        dispatch.hook('S_ACTION_END', dispatch.base.majorPatchVersion < 74 ? 4:5, {order: -999999999, filter:{fake:true}}, sActionEnd.bind(null, true));
-        dispatch.hook('S_ACTION_END', dispatch.base.majorPatchVersion < 74 ? 4:5, {order: -999999999, filter:{fake:false}}, sActionEnd.bind(null, false));
+        dispatch.hook('S_ACTION_END', 5, {order: -999999999, filter:{fake:true}}, sActionEnd.bind(null, true));
+        dispatch.hook('S_ACTION_END', 5, {order: -999999999, filter:{fake:false}}, sActionEnd.bind(null, false));
 
 
         function sLogin(e) {
